@@ -1,4 +1,4 @@
-def simple_calculator(a: float, b: float, operator: str) -> float:
+def simple_calculator(a: float, b: float, operator: str):
     if operator == '+':
         return a + b
     elif operator == '-':
