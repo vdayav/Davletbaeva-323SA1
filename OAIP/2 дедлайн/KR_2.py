@@ -1,37 +1,31 @@
-def find_superusers(admins: set, editors: set) -> set:
-    return admins & editors
+admins = {"admin_bob", "admin_alice", "admin_john"}
+editors = {"editor_nick", "editor_emma", "admin_bob"}
+banned = {"user5", "spammer", "admin_bob", "editor_nick"}
 
+access_attempts = ["user1", "user5", "admin_bob", "editor_nick", "unknown_user", "admin_alice"]
 
-def find_incorrectly_banned(access_attempts: list, banned: set, admins: set) -> set:
-    banned_attempts = set(access_attempts) & banned
-    
-    return banned_attempts - admins
+def find_super_users(admins_set, editors_set):
+    return admins_set.intersection(editors_set)
 
+def find_wrongly_banned(banned_set, admins_set, access_list):
+    wrongly_banned = []
+    for user in access_list:
+        if user in banned_set and user not in admins_set:
+            wrongly_banned.append(user)
+    return wrongly_banned
 
-def find_users_without_roles(access_attempts: list, admins: set, editors: set) -> set:
-    users_with_roles = admins | editors
-    
-    return set(access_attempts) - users_with_roles
+def find_no_role_users(access_list, admins_set, editors_set):
+    no_role = []
+    for user in access_list:
+        if user not in admins_set and user not in editors_set:
+            no_role.append(user)
+    return no_role
 
+super_users = find_super_users(admins, editors)
+print("Супер-пользователи (админы и редакторы одновременно):", super_users)
 
-def main():
-    admins = {"admin_bob", "admin_alice", "user1", "user3"}
-    editors = {"editor_john", "user1", "user2", "user4"}
-    banned = {"user5", "spammer", "user1", "admin_bob"}
-    access_attempts = ["user1", "user5", "admin_bob", "editor_john", 
-                       "user10", "spammer", "user2", "guest", "user7"]
-    
-    superusers = find_superusers(admins, editors)
-    print("Супер-пользователи (одновременно администраторы и редакторы):")
-    print(f"   {sorted(superusers) if superusers else 'Нет таких пользователей'}")
-    
-    incorrectly_banned = find_incorrectly_banned(access_attempts, banned, admins)
-    print("\nОшибочно заблокированные пользователи (в banned, но не админы):")
-    print(f"   {sorted(incorrectly_banned) if incorrectly_banned else 'Нет таких пользователей'}")
-    
-    users_without_roles = find_users_without_roles(access_attempts, admins, editors)
-    print("\nПользователи без ролей (пытались войти, но нет роли):")
-    print(f"   {sorted(users_without_roles) if users_without_roles else 'Нет таких пользователей'}")
+wrongly_banned_users = find_wrongly_banned(banned, admins, access_attempts)
+print("Некорректно заблокированные пользователи:", wrongly_banned_users)
 
-if __name__ == "__main__":
-    main()
+no_role_users = find_no_role_users(access_attempts, admins, editors)
+print("Пользователи без ролей:", no_role_users)
